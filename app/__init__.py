@@ -2,6 +2,7 @@ import os
 from flask import Flask
 from flask.logging import default_handler
 from logging.config import dictConfig
+from config import Config
 
 dictConfig({
     'version': 1,
@@ -25,9 +26,16 @@ dictConfig({
 })
 
 app = Flask(__name__)
-app.config.from_object('config')
+app.config.from_object(Config)
 app.logger.removeHandler(default_handler)
 
-# register blueprints
-from app_server.base_controller.controllers import bp as base_bp
-app.register_blueprint(base_bp)
+
+# Register blueprints
+from app.main.controller import bp as main_bp
+from app.user.controller import bp as user_bp
+app.register_blueprint(main_bp)
+app.register_blueprint(user_bp)
+
+@app.route('/test')
+def test_route():
+    return "<h2>Test page</h2>"
